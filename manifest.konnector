@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "name": "Orange VOD",
+  "type": "node",
+  "slug": "orange_vod",
+  "description": "This connector will download data from your Orange account on your Cozy",
+  "source": "git://github.com/cozy/cozy-konnector-orangevod.git",
+  "fields": {
+    "save_folder": {
+      "doctype": "io.cozy.files",
+      "type": "folder"
+    },
+    "account": {
+      "doctype": "io.cozy.accounts",
+      "account_type": "orange",
+      "accountFormat": "access_token"
+    }
+  },
+  "locales": {
+    "fr": {
+      "description": "Les données mises à disposition par Orange",
+      "permissions": {
+        "files": {
+          "description": "Utilisé pour sauvegarder les factures"
+        },
+        "accounts": {
+          "description": "Utilisé pour récupérer les données de compte"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "files": {
+      "description": "Required to save the videos",
+      "type": "io.cozy.files"
+    },
+    "accounts": {
+      "description": "Required to get the account's data",
+      "type": "io.cozy.accounts",
+      "verbs": ["GET"]
+    }
+  },
+  "developer": {
+    "name": "cozy",
+    "url": "https://cozy.io"
+  }
+}
