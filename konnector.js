@@ -61,7 +61,7 @@ const connector = module.exports = baseKonnector.createNew({
 function initProperties (requiredFields, entries, data, next) {
   requiredFields.remember = requiredFields.remember || {}
   next()
-},
+}
 
 function checkToken (requiredFields, entries, data, next) {
   log('info', 'requiredFields')
