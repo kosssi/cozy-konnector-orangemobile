@@ -45,6 +45,12 @@ module.exports = {
         .then(account => {
           // get the folder path from the folder id and put it in cozyFields.folderPath
           return new Promise((resolve, reject) => {
+            // quick exit, if no folderPath field.
+            // avoid unecesary file right.
+            if (!cozyFields.folderPath) {
+              return resolve(account)
+            }
+
             cozy.files.statById(cozyFields.folderPath, false)
             .then(folder => {
               cozyFields.folderPath = folder.attributes.path

@@ -74,7 +74,7 @@ function checkToken (requiredFields, entries, data, next) {
     payload = JSON.parse(new Buffer(payload, 'base64').toString())
 
     if (payload.token_type !== 'mobile') {
-      log('error', `Wronk token_type for this konnector: ${payload.token_type}`)
+      log('warn', `Wrong token_type for this konnector: ${payload.token_type}`)
     // TODO: stub !   return next('not mobile token')
     }
 
