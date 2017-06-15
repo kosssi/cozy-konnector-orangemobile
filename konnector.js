@@ -54,8 +54,8 @@ const connector = module.exports = baseKonnector.createNew({
     downloadGeoloc,
     downloadCRA,
     updateOrCreate(log, GeoPoint, ['msisdn', 'timestamp']),
-    updateOrCreate(log, PhoneCommunicationLog, ['msisdn', 'timestamp']),
-  ],
+    updateOrCreate(log, PhoneCommunicationLog, ['msisdn', 'timestamp'])
+  ]
 })
 
 function initProperties (requiredFields, entries, data, next) {
@@ -85,31 +85,27 @@ function checkToken (requiredFields, entries, data, next) {
   }
 }
 
-
 function setGeolocOptin (requiredFields, entries, data, next) {
   // if user change, set token.
   if (requiredFields.orangeGeolocOptin !== requiredFields.remember.orangeGeolocOptinPreviousState) {
     log('info', 'Setting geoloc optin for Orange...')
     const setOpt = requiredFields.orangeGeolocOptin ? 'in' : 'out'
-    requestOrange(`${API_ROOT}/profile/locopt?opt=${setOpt}`,
-      requiredFields.access_token,
-      (err, body) => {
-        if (err) {
-          log('error', `While setting geoloc optin: ${err}`)
-          data.errors = data.errors || []
-          data.errors.push('setting orange optin error')
+    requestOrange(`${API_ROOT}/profile/locopt?opt=${setOpt}`, requiredFields.access_token, (err, body) => {
+      if (err) {
+        log('error', `While setting geoloc optin: ${err}`)
+        data.errors = data.errors || []
+        data.errors.push('setting orange optin error')
 
-          // continue on error (to fetch CRA data at least)
-          return next()
-        }
-        log('info', `Just set: ${body.result}`)
-        next()
-      })
+        // continue on error (to fetch CRA data at least)
+        return next()
+      }
+      log('info', `Just set: ${body.result}`)
+      next()
+    })
   } else {
     next()
   }
 }
-
 
 function checkGeolocOptinState (requiredFields, entries, data, next) {
   log('info', 'Check geoloc opt-in state for Orange...')
@@ -137,7 +133,7 @@ function checkGeolocOptinState (requiredFields, entries, data, next) {
           {
             auth: {
               access_token: requiredFields.access_token,
-              orangeGeolocOptin: optin,
+              orangeGeolocOptin: optin
             }
           })
         .then(() => next())
@@ -147,7 +143,6 @@ function checkGeolocOptinState (requiredFields, entries, data, next) {
       next()
     })
 }
-
 
 function downloadGeoloc (requiredFields, entries, data, next) {
   if (!requiredFields.orangeGeolocOptin) {
@@ -169,8 +164,7 @@ function downloadGeoloc (requiredFields, entries, data, next) {
     if (err) { return next(err) }
     entries.geopoints = []
     body.forEach((point) => {
-      if (point.ts && (!requiredFields.remember.lastGeoPoint
-        || requiredFields.remember.lastGeoPoint < point.ts)) {
+      if (point.ts && (!requiredFields.remember.lastGeoPoint || requiredFields.remember.lastGeoPoint < point.ts)) {
         requiredFields.remember.lastGeoPoint = point.ts
       }
       if (point.err) { return }
@@ -189,7 +183,6 @@ function downloadGeoloc (requiredFields, entries, data, next) {
     next()
   })
 }
-
 
 function downloadCRA (requiredFields, entries, data, next) {
   log('info', 'Downloading CRA data from Orange...')
@@ -213,8 +206,7 @@ function downloadCRA (requiredFields, entries, data, next) {
 
     body.forEach((cra) => {
       try {
-        if (cra.time && (!requiredFields.remember.lastPhoneCommunicationLog
-          || requiredFields.remember.lastPhoneCommunicationLog < cra.time)) {
+        if (cra.time && (!requiredFields.remember.lastPhoneCommunicationLog || requiredFields.remember.lastPhoneCommunicationLog < cra.time)) {
           requiredFields.remember.lastPhoneCommunicationLog = cra.time
         }
         if (cra.err || cra.desc.indexOf('SMS_C') === 0) { return }
@@ -251,10 +243,8 @@ function downloadCRA (requiredFields, entries, data, next) {
   })
 }
 
-
 // // // // //
 // Helpers //
-
 
 function requestOrange (uri, token, callback) {
   log('info', uri)
