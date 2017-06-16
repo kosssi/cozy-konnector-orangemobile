@@ -4,12 +4,8 @@
   "type": "node",
   "slug": "orange_mobile",
   "description": "This connector will download data from your Orange account on your Cozy",
-  "source": "git://github.com/cozy/cozy-konnector-orangevod.git",
+  "source": "git://gitlab.cozycloud.cc/gjacquart/cozy-konnector-orangemobile.git",
   "fields": {
-    "save_folder": {
-      "doctype": "io.cozy.files",
-      "type": "folder"
-    },
     "account": {
       "doctype": "io.cozy.accounts",
       "account_type": "orange",
@@ -20,9 +16,6 @@
     "fr": {
       "description": "Les données mises à disposition par Orange",
       "permissions": {
-        "files": {
-          "description": "Utilisé pour sauvegarder les factures"
-        },
         "accounts": {
           "description": "Utilisé pour récupérer les données de compte"
         }

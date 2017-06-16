@@ -75,7 +75,7 @@ function checkToken (requiredFields, entries, data, next) {
 
     if (payload.token_type !== 'mobile') {
       log('warn', `Wrong token_type for this konnector: ${payload.token_type}`)
-    // TODO: stub !   return next('not mobile token')
+    // TODO: stub ! return next('not mobile token')
     }
 
     next()
