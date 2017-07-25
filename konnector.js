@@ -8,8 +8,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 const {log, updateOrCreate, models, cozyClient} = require('cozy-konnector-libs')
 const baseKonnector = require('./base_konnector_with_remember')
 
-const GeoPoint = models.baseModel.createNew({name: 'org.fing.mesinfos.geopoint', displayName: 'geopoint'})
-const PhoneCommunicationLog = models.baseModel.createNew({name: 'org.fing.mesinfos.phonecommunicationlog', displayName: 'phonecommunicationlog'})
+const GeoPoint = models.baseModel.createNew({name: 'fr.orange.geopoint', displayName: 'geopoint'})
+const PhoneCommunicationLog = models.baseModel.createNew({name: 'fr.orange.phonecommunicationlog', displayName: 'phonecommunicationlog'})
 
 const API_ROOT = 'https://mesinfos.orange.fr'
 
@@ -21,29 +21,30 @@ const connector = module.exports = baseKonnector.createNew({
   name: 'Orange Mobile',
   customView: '<%t konnector customview orange_mobile %>',
 
-  connectUrl: 'https://mesinfos.orange.fr/auth?redirect_url=',
-  category: 'telecom',
-  color: {
-    hex: '#FF6600',
-    css: '#FF6600'
-  },
+  // TODO obsolete ?
+  // connectUrl: 'https://mesinfos.orange.fr/auth?redirect_url=',
+  // category: 'telecom',
+  // color: {
+  //   hex: '#FF6600',
+  //   css: '#FF6600'
+  // },
 
-  fields: {
-    frequency: {
-      type: 'dropdown',
-      default: 'weekly',
-      advanced: true,
-      options: ['hourly', 'daily', 'weekly', 'monthly']
-    },
-    access_token: {
-      type: 'hidden'
-    },
+  // fields: {
+  //   frequency: {
+  //     type: 'dropdown',
+  //     default: 'weekly',
+  //     advanced: true,
+  //     options: ['hourly', 'daily', 'weekly', 'monthly']
+  //   },
+  //   access_token: {
+  //     type: 'hidden'
+  //   },
 
-    orangeGeolocOptin: {
-      type: 'checkbox'
-    }
-  },
-  dataType: ['geopoint', 'phonecommunicationlog'],
+  //   orangeGeolocOptin: {
+  //     type: 'checkbox'
+  //   }
+  // },
+  // dataType: ['geopoint', 'phonecommunicationlog'],
   models: [GeoPoint, PhoneCommunicationLog],
 
   fetchOperations: [

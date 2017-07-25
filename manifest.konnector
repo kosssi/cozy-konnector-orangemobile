@@ -9,7 +9,8 @@
     "account": {
       "doctype": "io.cozy.accounts",
       "account_type": "orange",
-      "accountFormat": "access_token"
+      "accountFormat": "access_token",
+      "scope": "M"
     }
   },
   "locales": {
@@ -30,11 +31,11 @@
     },
     "geopoint": {
       "description": "TODO",
-      "type": "org.fing.mesinfos.geopoint"
+      "type": "fr.orange.geopoint"
     },
     "phonecommunicationlog": {
       "description": "TODO",
-      "type": "org.fing.mesinfos.phonecommunicationlog"
+      "type": "fr.orange.phonecommunicationlog"
     }
   },
   "developer": {
