@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Orange Mobile",
   "type": "node",
   "slug": "orange_mobile",
@@ -11,6 +11,9 @@
       "account_type": "orange",
       "accountFormat": "access_token",
       "scope": "M"
+    },
+    "agreement": {
+      "type": "checkbox"
     }
   },
   "locales": {
@@ -39,7 +42,7 @@
     }
   },
   "developer": {
-    "name": "cozy",
-    "url": "https://cozy.io"
+    "name": "fing",
+    "url": "http://meisnfos.fing.org"
   }
 }

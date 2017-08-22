@@ -11,6 +11,7 @@ const baseKonnector = require('./base_konnector_with_remember')
 const GeoPoint = models.baseModel.createNew({name: 'fr.orange.geopoint', displayName: 'geopoint'})
 const PhoneCommunicationLog = models.baseModel.createNew({name: 'fr.orange.phonecommunicationlog', displayName: 'phonecommunicationlog'})
 
+const DOCTYPE_VERSION = 'cozy-konnector-orangemobile 2.0.0'
 const API_ROOT = 'https://mesinfos.orange.fr'
 
 /*
@@ -21,28 +22,10 @@ const connector = module.exports = baseKonnector.createNew({
   name: 'Orange Mobile',
   customView: '<%t konnector customview orange_mobile %>',
 
-  // TODO obsolete ?
-  // connectUrl: 'https://mesinfos.orange.fr/auth?redirect_url=',
   // category: 'telecom',
   // color: {
   //   hex: '#FF6600',
   //   css: '#FF6600'
-  // },
-
-  // fields: {
-  //   frequency: {
-  //     type: 'dropdown',
-  //     default: 'weekly',
-  //     advanced: true,
-  //     options: ['hourly', 'daily', 'weekly', 'monthly']
-  //   },
-  //   access_token: {
-  //     type: 'hidden'
-  //   },
-
-  //   orangeGeolocOptin: {
-  //     type: 'checkbox'
-  //   }
   // },
   // dataType: ['geopoint', 'phonecommunicationlog'],
   models: [GeoPoint, PhoneCommunicationLog],
@@ -65,8 +48,6 @@ function initProperties (requiredFields, entries, data, next) {
 }
 
 function checkToken (requiredFields, entries, data, next) {
-  log('info', 'requiredFields')
-  log('info', requiredFields)
   const token = requiredFields.access_token
   if (!token) { return next('token not found') }
 
@@ -88,9 +69,9 @@ function checkToken (requiredFields, entries, data, next) {
 
 function setGeolocOptin (requiredFields, entries, data, next) {
   // if user change, set token.
-  if (requiredFields.orangeGeolocOptin !== requiredFields.remember.orangeGeolocOptinPreviousState) {
+  if (requiredFields.agreement !== requiredFields.remember.orangeGeolocOptinPreviousState) {
     log('info', 'Setting geoloc optin for Orange...')
-    const setOpt = requiredFields.orangeGeolocOptin ? 'in' : 'out'
+    const setOpt = requiredFields.agreement ? 'in' : 'out'
     requestOrange(`${API_ROOT}/profile/locopt?opt=${setOpt}`, requiredFields.access_token, (err, body) => {
       if (err) {
         log('error', `While setting geoloc optin: ${err}`)
@@ -129,12 +110,12 @@ function checkGeolocOptinState (requiredFields, entries, data, next) {
       requiredFields.remember.orangeGeolocOptinPreviousState = optin
 
       // update in datasystem if changed
-      if (optin !== requiredFields.orangeGeolocOptin) {
+      if (optin !== requiredFields.agreement) {
         return cozyClient.data.updateAttributes('io.cozy.accounts', requiredFields.konnectorAccountId,
           {
             auth: {
               access_token: requiredFields.access_token,
-              orangeGeolocOptin: optin
+              agreement: optin
             }
           })
         .then(() => next())
@@ -146,7 +127,7 @@ function checkGeolocOptinState (requiredFields, entries, data, next) {
 }
 
 function downloadGeoloc (requiredFields, entries, data, next) {
-  if (!requiredFields.orangeGeolocOptin) {
+  if (!requiredFields.agreement) {
     log('info', 'No geoloc optin, skiping')
     data.errors = data.errors || []
     data.errors.push('no orange geoloc optin')
@@ -171,8 +152,7 @@ function downloadGeoloc (requiredFields, entries, data, next) {
       if (point.err) { return }
 
       entries.geopoints.push({
-        docType: 'GeoPoint',
-        docTypeVersion: connector.docTypeVersion,
+        docTypeVersion: DOCTYPE_VERSION,
         msisdn: point.msisdn,
         timestamp: point.ts,
         longitude: point.loc[0],
@@ -222,8 +202,7 @@ function downloadCRA (requiredFields, entries, data, next) {
         }
 
         entries.phonecommunicationlogs.push({
-          docType: 'PhoneCommunicationLog',
-          docTypeVersion: connector.docTypeVersion,
+          docTypeVersion: DOCTYPE_VERSION,
           timestamp: cra.time,
           msisdn: cra.msisdn,
           partner: cra.partner,
@@ -249,7 +228,6 @@ function downloadCRA (requiredFields, entries, data, next) {
 
 function requestOrange (uri, token, callback) {
   log('info', uri)
-
   request.get(uri, { auth: { bearer: token }, json: true }, (err, res, body) => {
     if (err) {
       log('error', `Download failed: ${err}`)

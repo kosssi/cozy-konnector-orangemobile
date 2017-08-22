@@ -1,4 +1,4 @@
-[Cozy][cozy] Orange VOD konnector
+[Cozy][cozy] Orange Mohile konnector
 =================================
 
 What's Cozy?

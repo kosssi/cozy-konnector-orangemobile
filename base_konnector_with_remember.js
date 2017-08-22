@@ -4,7 +4,9 @@ const _ = require('lodash')
 const slugify = require('cozy-slug')
 //const fetcher = require('./fetcher')
 //const cozy = require('./cozyclient')
-const {fetcher, cozyClient} = require('cozy-konnector-libs')
+const {fetcher, cozyClient, log} = require('cozy-konnector-libs')
+const debug = require('debug')('base_konnector')
+
 const cozy = cozyClient
 
 module.exports = {
@@ -34,12 +36,16 @@ module.exports = {
       models: modelsObj,
 
       fetch: function (cozyFields, callback) {
+        // FIXME : this should be removed when stack offers a clean way to pass DEBUG='*' in debug mode
+        process.env.DEBUG = process.env.DEBUG || '*'
+        debug(cozyFields, 'cozyFields in fetch')
         var importer = fetcher.new()
 
         // First get the account related to the specified account id
         cozy.data.find('io.cozy.accounts', cozyFields.account)
         .catch(() => {
           console.error(`Account ${cozyFields.account} does not exist`)
+          debug(err, 'error while fetching the account')
           process.exit(0)
         })
         .then(account => {
@@ -51,15 +57,22 @@ module.exports = {
               return resolve(account)
             }
 
+            // get the folder path from the folder id and put it in cozyFields.folderPath
             cozy.files.statById(cozyFields.folderPath, false)
             .then(folder => {
               cozyFields.folderPath = folder.attributes.path
+              debug(folder, 'folder details')
               resolve(account)
             })
-            .catch(() => reject('NOT_EXISTING_DIRECTORY'))
+            .catch((err) => {
+              log('error', `error while getting the folder path from ID : "${cozyFields.folderPath}"`)
+              log('error', err.message)
+              reject(new Error('NOT_EXISTING_DIRECTORY'))
+            })
           })
         })
         .then(account => {
+          // debug(account, 'account content')
           const requiredFields = Object.assign({
             folderPath: cozyFields.folderPath,
             konnectorAccountId: cozyFields.account,
@@ -71,7 +84,9 @@ module.exports = {
           })
           importer.args(requiredFields, {}, {})
           importer.fetch((err, fields, entries) => {
+            debug(entries, 'final entries')
             if (err) {
+              debug(err, 'error during the fetch operations of the connector')
               callback(err)
             } else {
               if (!requiredFields.remember) { return callback(null, entries.notifContent) }
@@ -85,7 +100,8 @@ module.exports = {
           })
         })
         .catch(err => {
-          callback(err)
+          debug(err, 'unexpected error while running the connector')
+          callback(err.message || err)
         })
       }
 
