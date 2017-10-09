@@ -25,7 +25,7 @@
     "cz-conventional-changelog": "^2.0.0",
     "env-cmd": "^5.1.0",
     "request-debug": "^0.2.0",
-    "webpack": "^2.5.1"
+    "webpack": "3"
   },
   "config": {
     "commitizen": {
