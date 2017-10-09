@@ -145,21 +145,23 @@ function downloadGeoloc (requiredFields, entries, data, next) {
   requestOrange(uri, requiredFields.access_token, (err, body) => {
     if (err) { return next(err) }
     entries.geopoints = []
-    body.forEach((point) => {
-      if (point.ts && (!requiredFields.remember.lastGeoPoint || requiredFields.remember.lastGeoPoint < point.ts)) {
-        requiredFields.remember.lastGeoPoint = point.ts
-      }
-      if (point.err) { return }
+    if (body && typeof body.forEach === 'function') {
+      body.forEach((point) => {
+        if (point.ts && (!requiredFields.remember.lastGeoPoint || requiredFields.remember.lastGeoPoint < point.ts)) {
+          requiredFields.remember.lastGeoPoint = point.ts
+        }
+        if (point.err) { return }
 
-      entries.geopoints.push({
-        docTypeVersion: DOCTYPE_VERSION,
-        msisdn: point.msisdn,
-        timestamp: point.ts,
-        longitude: point.loc[0],
-        latitude: point.loc[1],
-        radius: point.rad
+        entries.geopoints.push({
+          docTypeVersion: DOCTYPE_VERSION,
+          msisdn: point.msisdn,
+          timestamp: point.ts,
+          longitude: point.loc[0],
+          latitude: point.loc[1],
+          radius: point.rad
+        })
       })
-    })
+    }
 
     next()
   })
