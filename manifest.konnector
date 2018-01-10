@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.0.1",
   "name": "Orange Mobile",
   "type": "node",
   "slug": "orange_mobile",
@@ -31,6 +31,10 @@
       "description": "Required to get the account's data",
       "type": "io.cozy.accounts",
       "verbs": ["GET", "PUT"]
+    },
+    "files": {
+      "description": "Should not be required",
+      "type": "io.cozy.files"
     },
     "geopoint": {
       "description": "TODO",

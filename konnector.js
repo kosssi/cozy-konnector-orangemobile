@@ -11,6 +11,8 @@ const baseKonnector = require('./base_konnector_with_remember')
 const GeoPoint = models.baseModel.createNew({name: 'fr.orange.geopoint', displayName: 'geopoint'})
 const PhoneCommunicationLog = models.baseModel.createNew({name: 'fr.orange.phonecommunicationlog', displayName: 'phonecommunicationlog'})
 
+const CRA_PERIOD = 7 * 24 * 60 * 60 * 1000
+
 const DOCTYPE_VERSION = 'cozy-konnector-orangemobile 2.0.0'
 const API_ROOT = 'https://mesinfos.orange.fr'
 
@@ -168,6 +170,13 @@ function downloadGeoloc (requiredFields, entries, data, next) {
 }
 
 function downloadCRA (requiredFields, entries, data, next) {
+  // Make request only the appropriate day.
+  if (requiredFields.remember.lastPhoneCommunicationLog
+  && new Date(requiredFields.remember.lastPhoneCommunicationLog).getTime() + CRA_PERIOD > new Date().getTime() ) {
+    log('info', 'Wait a few before fetching CRA')
+    return next()
+  }
+
   log('info', 'Downloading CRA data from Orange...')
 
   let uri = `${API_ROOT}/data/cra`
