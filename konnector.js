@@ -214,7 +214,10 @@ function downloadCRA (requiredFields, entries, data, next) {
           latitude: cra.loc ? cra.loc[1] : undefined,
           networkType: cra.net_lbl,
           type: cra.desc,
-          endCause: cra.end_cause
+          endCause: cra.end_cause,
+          endCauseLabel: cra.end_cause_lbl,
+          deviceLabel: cra.device_lbl,
+          deviceTac: cra.device_tac,
         })
       } catch (e) {
         log('error', 'While parsing CRA.')
